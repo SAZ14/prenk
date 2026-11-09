@@ -21,6 +21,7 @@
     --purple: #7b2cff;
     --night: #0b0221;
     --green: #39ff14;
+    color-scheme: dark;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
@@ -80,7 +81,8 @@
   .screen {
     position: fixed; inset: 0; z-index: 10;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 22px; padding: 16px; text-align: center;
+    gap: 22px; text-align: center;
+    padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
   }
   .hidden { display: none !important; }
 
@@ -169,7 +171,7 @@
   #runaway { position: relative; transition: transform .15s ease-out; }
 
   .toast {
-    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+    position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
     z-index: 60; font-family: 'Press Start 2P', monospace; font-size: 10px; line-height: 1.6;
     background: var(--yellow); color: var(--night); padding: 12px 14px;
     box-shadow: 4px 4px 0 var(--pink); max-width: calc(100% - 32px); text-align: center;
@@ -177,7 +179,7 @@
   }
   .toast.show { opacity: 1; }
 
-  .coin { position: fixed; bottom: 14px; right: 16px; z-index: 20; font-size: 10px; color: var(--yellow); }
+  .coin { position: fixed; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); right: calc(16px + env(safe-area-inset-right, 0px)); z-index: 20; font-size: 10px; color: var(--yellow); }
 
   @media (prefers-reduced-motion: reduce) {
     .grid, .big, .big::before, .big::after, .crt, .gift { animation: none !important; }
@@ -427,8 +429,10 @@
   run.addEventListener('click', (e) => { dodge(e); toast('THERE IS NO ESCAPE.'); });
 
   // Trying to leave? Lol.
-  history.pushState(null, '', location.href);
-  addEventListener('popstate', () => { history.pushState(null, '', location.href); toast('BACK BUTTON? IN THIS ECONOMY?'); });
+  try {
+    history.pushState(null, '', location.href);
+    addEventListener('popstate', () => { try { history.pushState(null, '', location.href); } catch (e) {} toast('BACK BUTTON? IN THIS ECONOMY?'); });
+  } catch (e) {}
 })();
 </script>
 </body>
